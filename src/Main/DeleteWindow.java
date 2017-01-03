@@ -6,7 +6,12 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
+/**
+ * Class that creates the delete window.
+ * 
+ * @author Emil Karlsson
+ *
+ */
 public class DeleteWindow extends JFrame {
 
 	private JPanel contentPane;
@@ -27,13 +32,17 @@ public class DeleteWindow extends JFrame {
 		addButton();
 
 	}
-	
-	public void addButton(){
+	private void addButton(){
 		delete = new RolloverButton("Delete", Color.darkGray, Color.lightGray, Color.white);
 		delete.setBounds(324, 13, 120, 22);
 		delete.setFont(new Font("Candara", Font.BOLD, 13));
 		contentPane.add(delete);
 	}
+	/**
+	 * Method that creates the drop down menu.
+	 * 
+	 * @param menuOptions
+	 */
 	public void addDropDownMenu(ComboBoxObject[] menuOptions) {
 		int arrayLength = menuOptions.length;
 		String[] menuOptionsString = new String[arrayLength];

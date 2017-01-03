@@ -6,14 +6,19 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 import javax.swing.JTextField;
-
+/**
+ * Class that extends the JTextField class, creates textfields that have a hint.
+ * @author Emil Karlsson
+ *
+ */
 public class FocusedTextField extends JTextField implements FocusListener{
 
 	private String hint;
-	
-	public FocusedTextField(){
-		
-	}
+
+	/**
+	 * Constructor.
+	 * @param hint
+	 */
 	public FocusedTextField(String hint){
 		this.hint = hint;
 		this.setText(hint);
@@ -22,6 +27,9 @@ public class FocusedTextField extends JTextField implements FocusListener{
 		addFocusListener(this);
 	}
 	
+	/**
+	 * Method that modifies the text if it gets focus.
+	 */
 	@Override
 	public void focusGained(FocusEvent e) {
 		this.setText("");
@@ -30,11 +38,13 @@ public class FocusedTextField extends JTextField implements FocusListener{
 
 	}
 
+	/**
+	 * Method that modifies the text if it looses focus.
+	 */
 	@Override
 	public void focusLost(FocusEvent e) {
-		if(this.getText() == ""){
+		if(this.getText() == "" || this.getText() == null){
 			this.setText(this.hint);
-			this.setText(hint);
 		}
 		this.setFont(new Font("Tahoma", Font.ITALIC, 13));
 		this.setForeground(Color.gray);

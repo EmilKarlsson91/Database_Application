@@ -9,6 +9,11 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+/**
+ * 
+ * @author Emil Karlsson
+ *
+ */
 public class Controller {
 
 	private static DAOManager manager;
@@ -19,23 +24,31 @@ public class Controller {
 	private static AllDataDAO allData;
 	private static AdminWindow admWindow;
 	private static AddWindow addWindow;
+	private static UpdateWindow updateWindow;
 	private static DeleteWindow deleteWindow;
 
+	/**
+	 * Method that initializes the controller.
+	 * 
+	 * @throws Exception
+	 */
 	public static void controllerManager() throws Exception {
 
 		initializeGui();
 		initialize();
-		update();
+		refresh();
 		actionListenersAdmin();
 	}
 
-	public static void update() throws SQLException {
+	private static void refresh() throws SQLException {
 		ResultSet rs = allData.getAllData();
 		printTable(rs);
-		addRow(rs);
+		if(rs.next()){
+			addRow(rs);	
+		}
 	}
 
-	public static void initialize() throws Exception {
+	private static void initialize() throws Exception {
 		try {
 			manager = new DAOManager("root", "test");
 			manager.open();
@@ -51,7 +64,7 @@ public class Controller {
 		}
 	}
 
-	public static void initializeGui() {
+	private static void initializeGui() {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -64,18 +77,45 @@ public class Controller {
 		});
 	}
 
-	public static void search() throws SQLException {
+	private static void search() throws SQLException {
 		ResultSet rs = allData.search(admWindow.getTxfSearch().getText());
 		printTable(rs);
-		addRow(rs);
+		if(rs.next()){
+			addRow(rs);			
+		}
+	}
+	private static void update(ResultSet rs, int index) throws SQLException{
+		ObjectBox objectBox = updateWindow.getComboBox();
+		int selectedIndex = objectBox.getId();
+		rs.beforeFirst();
+		while (rs.next()) {
+			if (index == 0) {
+				store.updateRow(updateWindow.getTxf1().getText(), updateWindow.getTxf2().getText(), selectedIndex);
+				return;
+			} else if (index == 1) {
+				book.updateRow(updateWindow.getTxf1().getText(), selectedIndex);
+				return;
+			} else if (index == 2) {
+				int age;
+				try{
+					age = Integer.parseInt(updateWindow.getTxf2().getText());
+				}
+				catch(Exception e){
+					JOptionPane.showMessageDialog(deleteWindow, "Enter author age in a numeric value..");
+					return;
+				}
+				author.updateRow(updateWindow.getTxf1().getText(), age, selectedIndex);
+				return;
+			}
+		}
+		JOptionPane.showMessageDialog(deleteWindow, "Action successful!");
 	}
 
-	public static void delete(ResultSet rs, int index) throws SQLException {
+
+	private static void delete(ResultSet rs, int index) throws SQLException {
 		ObjectBox objectBox = deleteWindow.getComboBox();
 		int selectedIndex = objectBox.getId();
-		ResultSet rsHave = have.getTableDesc();
 		rs.beforeFirst();
-		rsHave.beforeFirst();
 		while (rs.next()) {
 			if (index == 0) {
 				store.deleteRow(selectedIndex);
@@ -90,10 +130,11 @@ public class Controller {
 				return;
 			}
 		}
+		JOptionPane.showMessageDialog(deleteWindow, "Action successful!");
 	}
 
 	@SuppressWarnings("resource")
-	public static void submitAdd() throws SQLException {
+	private static void submitAdd() throws SQLException {
 		ResultSet rsId;
 		ResultSet rsHave;
 		ObjectBox objectBox;
@@ -135,33 +176,52 @@ public class Controller {
 			}
 			addWindow.getComboBoxAuthor().setSelectedIndex(authorId);
 		} else if (addWindow.getBtnNewAuthor().getPressed()) {
-			author.insertInto(addWindow.getTxfAuthorName().getText(), addWindow.getTxfAuthorAge().getText());
+			try{
+				author.insertInto(addWindow.getTxfAuthorName().getText(), addWindow.getTxfAuthorAge().getText());				
+			}
+			catch(Exception e){
+				JOptionPane.showMessageDialog(deleteWindow, "Enter author age in a numeric value..");
+				return;
+			}
 		} else {
 			objectBox = addWindow.getComboBoxAuthor();
 			authorId = objectBox.getId();
 		}
-		if (addWindow.getBtnNewBook().getPressed()) {
-			rsId = allData.getAllId();
+		if (addWindow.getBtnNewBook().getPressed() && addWindow.getBtnNewAuthor().getPressed()) {
+			rsId = allData.getStoreAndAuthorId();
 			rsId.last();
+			book.insertInto(addWindow.getTxfBookName().getText(), rsId.getInt(2));				
+		}
+		else if(addWindow.getBtnNewBook().getPressed()){
 			book.insertInto(addWindow.getTxfBookName().getText(), authorId);
-		} else {
+		}
+		else {
 			objectBox = addWindow.getComboBoxBooks();
 			bookId = objectBox.getId();
 		}
 
-		if (addWindow.getBtnNewStore().getPressed() || addWindow.getBtnNewBook().getPressed()
-				|| addWindow.getBtnNewAuthor().getPressed()) {
+		if (addWindow.getBtnNewStore().getPressed() || addWindow.getBtnNewBook().getPressed()) {
 			rsId = allData.getAllId();
 			rsId.last();
-			storeId = rsId.getInt(1);
-			bookId = rsId.getInt(2);
+			if(addWindow.getBtnNewStore().getPressed() && addWindow.getBtnNewBook().getPressed()){
+				storeId = rsId.getInt(1);
+				bookId = rsId.getInt(2);		
+			}
+			else if(addWindow.getBtnNewStore().getPressed()){
+				storeId = rsId.getInt(1);
+			}
+			else{
+				bookId = rsId.getInt(2);		
+
+			}
+
 		}
 
 		try {
 			stock = Integer.parseInt(addWindow.getTxfStock().getText());
 			price = Integer.parseInt(addWindow.getTxfPrice().getText());
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(deleteWindow, "Invalid input");
+			JOptionPane.showMessageDialog(deleteWindow, "You have to enter a value in every field");
 			return;
 		}
 		rsHave = have.getTableDesc();
@@ -177,9 +237,10 @@ public class Controller {
 			return;
 		}
 		have.insertInto(storeId, bookId, stock, price);
+		JOptionPane.showMessageDialog(addWindow, "Action successful!");
 	}
 
-	public static void add() throws SQLException {
+	private static void add() throws SQLException {
 
 		if (addWindow.getBtnNewStore().getPressed()) {
 			addWindow.comboBoxDisable(addWindow.getComboBoxStores());
@@ -210,12 +271,34 @@ public class Controller {
 		}
 		else{
 			addWindow.comboBoxEnable(addWindow.getComboBoxAuthor());
-			addWindow.textFieldEnable(addWindow.getTxfAuthorName());
-			addWindow.textFieldEnable(addWindow.getTxfAuthorAge());
+			addWindow.textFieldDisable(addWindow.getTxfAuthorName());
+			addWindow.textFieldDisable(addWindow.getTxfAuthorAge());
 		}
 	}
+	
+	private static void initializeUpdateWindow(int index) throws SQLException {
+		ResultSet rs = null;
+		String select = "";
+		updateWindow = new UpdateWindow();
+		if (index == 0) {
+			rs = store.getTableAsce();
+			updateWindow.addTextFieldStore();
+			select = "Selet store: ";
+		} else if (index == 1) {
+			rs = book.getTableAsce();
+			updateWindow.addTextFieldBook();
+			select = "Select book: ";
+		} else if (index == 2) {
+			rs = author.getTableAsce();
+			updateWindow.addTextFieldAuthor();
+			select = "Select author: ";
+		}
+		updateWindow.addDropDownMenu(dropDownMenuObject(rs, select));
+		updateWindow.setVisible(true);
+		actionListenersUpdateWindow(rs, index);
+	}
 
-	public static void initializeDeleteWindow(int index) throws SQLException {
+	private static void initializeDeleteWindow(int index) throws SQLException {
 		ResultSet rs = null;
 		String select = "";
 		if (index == 0) {
@@ -235,7 +318,7 @@ public class Controller {
 
 	}
 
-	public static void initializeAddBookWindow() throws SQLException {
+	private static void initializeAddBookWindow() throws SQLException {
 		ResultSet rs = store.getTableAsce();
 		ResultSet rs2 = book.getTableAsce();
 		ResultSet rs3 = author.getTableAsce();
@@ -243,9 +326,6 @@ public class Controller {
 		addWindow.addDropDownMenuStores(dropDownMenuObject(rs, "Select store:"));
 		addWindow.addDropDownMenuBooks(dropDownMenuObject(rs2, "Select book:"));
 		addWindow.addDropDownMenuAuthor(dropDownMenuObject(rs3, "Select author:"));
-		addWindow.addTextFieldStore();
-		addWindow.addTextFieldBook();
-		addWindow.addTextFieldAuthor();
 		addWindow.textFieldDisable(addWindow.getTxfStoreName());
 		addWindow.textFieldDisable(addWindow.getTxfStoreAdress());
 		addWindow.textFieldDisable(addWindow.getTxfBookName());
@@ -256,14 +336,14 @@ public class Controller {
 		actionListenersAddWindow();
 	}
 
-	public static void printList(ResultSet rs) throws SQLException {
+	private static void printList(ResultSet rs) throws SQLException {
 		while (rs.next()) {
 			String testStr = rs.getString("name") + " " + rs.getString("adress");
 			System.out.println(testStr);
 		}
 	}
 
-	public static ComboBoxObject[] dropDownMenuObject(ResultSet rs, String defaultStr) throws SQLException {
+	private static ComboBoxObject[] dropDownMenuObject(ResultSet rs, String defaultStr) throws SQLException {
 		rs.beforeFirst();
 		int rowCount = 0;
 		while (rs.next()) {
@@ -284,7 +364,7 @@ public class Controller {
 		return dropDownMenu;
 	}
 
-	public static String[] dropDownMenuString(ResultSet rs, String defaultStr) throws SQLException {
+	private static String[] dropDownMenuString(ResultSet rs, String defaultStr) throws SQLException {
 		rs.beforeFirst();
 		int rowCount = 0;
 		while (rs.next()) {
@@ -305,7 +385,7 @@ public class Controller {
 		return dropDownMenu;
 	}
 
-	public String[] resultSetToArray(ResultSet rs) throws SQLException {
+	private String[] resultSetToArray(ResultSet rs) throws SQLException {
 		rs.beforeFirst();
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsCount = rsmd.getColumnCount();
@@ -317,7 +397,7 @@ public class Controller {
 		return rowData;
 	}
 
-	public static void printTable(ResultSet rs) throws SQLException {
+	private static void printTable(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsCount = rsmd.getColumnCount();
 		String[] columnNames = new String[columnsCount];
@@ -328,7 +408,7 @@ public class Controller {
 		admWindow.addScrollTable(columnNames);
 	}
 
-	public static void addRow(ResultSet rs) throws SQLException {
+	private static void addRow(ResultSet rs) throws SQLException {
 		ResultSetMetaData rsmd = rs.getMetaData();
 		int columnsCount = rsmd.getColumnCount();
 		rs.beforeFirst();
@@ -341,7 +421,7 @@ public class Controller {
 		}
 	}
 
-	public static void actionListenersAdmin() throws SQLException {
+	private static void actionListenersAdmin() throws SQLException {
 		admWindow.getBtnRemoveStore().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -383,7 +463,34 @@ public class Controller {
 		admWindow.getRefresh().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					update();
+					refresh();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		admWindow.getBtnUpdateStore().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					initializeUpdateWindow(0);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		admWindow.getBtnUpdateBook().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					initializeUpdateWindow(1);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
+			}
+		});
+		admWindow.getBtnUpdateAuthor().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					initializeUpdateWindow(2);
 				} catch (SQLException e1) {
 					e1.printStackTrace();
 				}
@@ -400,7 +507,7 @@ public class Controller {
 		});
 	}
 
-	public static void actionListenersAddWindow() {
+	private static void actionListenersAddWindow() {
 		addWindow.getBtnNewStore().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (addWindow.getBtnNewStore().getPressed()) {
@@ -455,7 +562,6 @@ public class Controller {
 				addWindow.getBtnSubmit().setPressed(true);
 				try {
 					Controller.submitAdd();
-					JOptionPane.showMessageDialog(addWindow, "Action successful!");
 					addWindow.setVisible(false);
 					addWindow.setEnabled(false);
 					addWindow = null;
@@ -513,13 +619,12 @@ public class Controller {
         });
 	}
 
-	public static void actionListenersDeleteWindow(ResultSet rs, int index) {
+	private static void actionListenersDeleteWindow(ResultSet rs, int index) {
 		deleteWindow.getBtn().addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				deleteWindow.getBtn().setPressed(true);
 				try {
 					delete(rs, index);
-					JOptionPane.showMessageDialog(deleteWindow, "Action successful!");
 					deleteWindow.setVisible(false);
 					deleteWindow.setEnabled(false);
 					deleteWindow = null;
@@ -529,5 +634,21 @@ public class Controller {
 				}
 			}
 		});
+	}
+	private static void actionListenersUpdateWindow(ResultSet rs, int index){
+		updateWindow.getBtn().addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updateWindow.getBtn().setPressed(true);
+				try {
+					update(rs, index);
+					updateWindow.setVisible(false);
+					updateWindow.setEnabled(false);
+					updateWindow = null;
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});	
 	}
 }

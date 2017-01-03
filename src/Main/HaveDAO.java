@@ -5,14 +5,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Class that extends the AbstractDAO class, Creates resultsets regarding the have table.
+ * @author emkar
+ *
+ */
 public class HaveDAO extends AbstractDAO{
 
 	private static final String TABLENAME = "have";
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param conn
+	 */
 	public HaveDAO(Connection conn){
 		super(TABLENAME, conn);
 		
 	}
+	/**
+	 * Method that returns a resultset with all information from the have table.
+	 * 
+	 * @return rs
+	 */
 	public ResultSet getTableDesc() throws SQLException{
 		PreparedStatement p;
 		ResultSet rs;
@@ -26,6 +41,15 @@ public class HaveDAO extends AbstractDAO{
 			throw e;
 		}		
 	}
+	/**
+	 * Method that inserts data into the have table.
+	 * 
+	 * @param storeid
+	 * @param bookid
+	 * @param stock
+	 * @param price
+	 * @throws SQLException
+	 */
 	public void insertInto(int storeid, int bookid, int stock, int price) throws SQLException{
 		PreparedStatement p;
 		String insertQuery = "INSERT INTO have(storeid, bookid, stock, price) VALUES (?, ?, ?, ?)";
@@ -42,6 +66,12 @@ public class HaveDAO extends AbstractDAO{
 				throw e;
 			}
 	}
+	/**
+	 * Method that deletes a row at a specific index.
+	 * 
+	 * @param id
+	 * @throws SQLException
+	 */
 	public void deleteRowStore(int id) throws SQLException{
 		PreparedStatement p;
 		String insertQuery = "DELETE FROM have WHERE storeid = ?";
@@ -55,6 +85,12 @@ public class HaveDAO extends AbstractDAO{
 				throw e;
 			}
 	}
+	/**
+	 * Method that deletes a row at a specific index.
+	 * 
+	 * @param id
+	 * @throws SQLException
+	 */
 	public void deleteRowBook(int id) throws SQLException{
 		PreparedStatement p;
 		String insertQuery = "DELETE FROM have WHERE bookid = ?";

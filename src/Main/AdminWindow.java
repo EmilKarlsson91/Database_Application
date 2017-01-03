@@ -9,14 +9,20 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
-
+/**
+ * Class that creates the admin window.
+ * 
+ * @author Emil Karlsson
+ *
+ */
 public class AdminWindow extends JFrame {
 
 	private RolloverButton btnRemoveStore;
-	private RolloverButton btnAuthor;
+	private RolloverButton btnUpdateBook;
 	private RolloverButton btnAdd;
 	private RolloverButton btnRefresh;
 	private RolloverButton btnUpdateStore;
+	private RolloverButton btnUpdateAuthor;
 	private	RolloverButton btnRemoveBook;
 	private RolloverButton btnRemoveAuthor;
 	private JScrollPane tableScroll;
@@ -43,6 +49,11 @@ public class AdminWindow extends JFrame {
 		addButtons();
 
 	}
+	/**
+	 * Method that creates the table inside a scrollpane on window.
+	 * 
+	 * @param columnNames
+	 */
 	public void addScrollTable(String columnNames[]){
 		tableModel = new DefaultTableModel(columnNames, 0);
 		table = new JTable(tableModel);
@@ -51,10 +62,9 @@ public class AdminWindow extends JFrame {
 		tableScroll.setBounds(8, 180, 1177, 427);
 		contentPane.add(tableScroll);
 	}
-	
 	private void addSearchBox(){
 		txtSearch = new FocusedTextField("Search");
-		txtSearch.setBounds(408, 51, 120, 25);
+		txtSearch.setBounds(540, 13, 120, 25);
 		contentPane.add(txtSearch);
 		txtSearch.setColumns(10);
 	}
@@ -75,14 +85,19 @@ public class AdminWindow extends JFrame {
 		btnUpdateStore.setBounds(12, 51, 120, 25);
 		contentPane.add(btnUpdateStore);
 		
-		btnAuthor = new RolloverButton("Update book", Color.darkGray, Color.lightGray, Color.white);
-		btnAuthor.setFont(new Font("Consolas", Font.BOLD, 13));
-		btnAuthor.setBounds(144, 51, 120, 25);
-		contentPane.add(btnAuthor);
+		btnUpdateBook = new RolloverButton("Update book", Color.darkGray, Color.lightGray, Color.white);
+		btnUpdateBook.setFont(new Font("Consolas", Font.BOLD, 13));
+		btnUpdateBook.setBounds(144, 51, 120, 25);
+		contentPane.add(btnUpdateBook);
+		
+		btnUpdateAuthor = new RolloverButton("Update author", Color.darkGray, Color.lightGray, Color.white);
+		btnUpdateAuthor.setFont(new Font("Consolas", Font.BOLD, 13));
+		btnUpdateAuthor.setBounds(276, 51, 125, 25);
+		contentPane.add(btnUpdateAuthor);
 		
 		btnRefresh = new RolloverButton("Refresh", Color.darkGray, Color.lightGray, Color.white);
 		btnRefresh.setFont(new Font("Candara", Font.BOLD, 13));
-		btnRefresh.setBounds(276, 51, 120, 25);
+		btnRefresh.setBounds(408, 51, 120, 25);
 		contentPane.add(btnRefresh);
 		
 		btnRemoveBook = new RolloverButton("Remove book", Color.darkGray, Color.lightGray, Color.white);
@@ -97,6 +112,10 @@ public class AdminWindow extends JFrame {
 		btnRemoveAuthor.setBounds(408, 13, 125, 25);
 		contentPane.add(btnRemoveAuthor);
 	}
+	/**
+	 * Method that prints data from the database on the table.
+	 * @param rowEntities
+	 */
 	public void insertRow(String[] rowEntities){
 		tableModel.insertRow(0, rowEntities);
 	}
@@ -114,6 +133,12 @@ public class AdminWindow extends JFrame {
 	}
 	public RolloverButton getBtnUpdateStore(){
 		return this.btnUpdateStore;
+	}
+	public RolloverButton getBtnUpdateBook(){
+		return this.btnUpdateBook;
+	}
+	public RolloverButton getBtnUpdateAuthor(){
+		return this.btnUpdateAuthor;
 	}
 	public RolloverButton getBtnRemoveBook(){
 		return this.btnRemoveBook;

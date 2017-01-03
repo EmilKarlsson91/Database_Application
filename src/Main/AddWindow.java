@@ -6,7 +6,12 @@ import java.awt.Font;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
-
+/**
+ * Class that creates the add window.
+ * 
+ * @author Emil Karlsson
+ *
+ */
 public class AddWindow extends JFrame {
 
 	private JPanel contentPane;
@@ -41,7 +46,7 @@ public class AddWindow extends JFrame {
 		addButtons();
 		addTextFields();
 	}
-	public void addTextFields(){
+	private void addTextFields(){
 		stockField = new FocusedTextField("Stock");
 		stockField.setBounds(948, 13, 93, 22);
 		contentPane.add(stockField);
@@ -52,10 +57,6 @@ public class AddWindow extends JFrame {
 		contentPane.add(priceField);
 		priceField.setColumns(10);
 		
-	}
-	
-	public void addTextFieldStore(){
-		
 		textFieldStoreName = new FocusedTextField("Store name");
 		textFieldStoreName.setBounds(12, 13, 146, 22);
 		contentPane.add(textFieldStoreName);
@@ -65,17 +66,11 @@ public class AddWindow extends JFrame {
 		textFieldStoreAdress.setBounds(168, 13, 146, 22);
 		contentPane.add(textFieldStoreAdress);
 		textFieldStoreAdress.setColumns(10);
-	}
-	
-	public void addTextFieldBook(){
 		
 		textFieldBookName = new FocusedTextField("Book name");
 		textFieldBookName.setBounds(324, 13, 146, 22);
 		contentPane.add(textFieldBookName);
 		textFieldBookName.setColumns(10);
-	}
-	
-	public void addTextFieldAuthor(){
 		
 		textFieldAuthorName = new FocusedTextField("Author name");
 		textFieldAuthorName.setBounds(635, 13, 146, 22);
@@ -87,7 +82,6 @@ public class AddWindow extends JFrame {
 		contentPane.add(textFieldAuthorAge);
 		textFieldAuthorAge.setColumns(10);
 	}
-
 	private void addButtons(){
 		newStore = new RolloverButton("New Store", Color.darkGray, Color.lightGray, Color.white);
 		newStore.setBounds(12, 48, 120, 22);
@@ -110,7 +104,10 @@ public class AddWindow extends JFrame {
 		submit.setFont(new Font("Candara", Font.BOLD, 13));
 		contentPane.add(submit);
 	}
-	
+	/**
+	 * Method that creates the drop down menu for store.
+	 * @param menuOptions
+	 */
 	public void addDropDownMenuStores(ComboBoxObject[] menuOptions) {
 		int arrayLength = menuOptions.length;
 		String[] menuOptionsString = new String[arrayLength];
@@ -123,6 +120,10 @@ public class AddWindow extends JFrame {
 		comboBoxStores.setBounds(12, 13, 300, 22);
 		contentPane.add(comboBoxStores);
 	}
+	/**
+	 * Method that creates the drop down menu for books.
+	 * @param menuOptions
+	 */
 	public void addDropDownMenuBooks(ComboBoxObject[] menuOptions) {
 		int arrayLength = menuOptions.length;
 		String[] menuOptionsString = new String[arrayLength];
@@ -135,6 +136,10 @@ public class AddWindow extends JFrame {
 		comboBoxBooks.setBounds(324, 13, 300, 22);
 		contentPane.add(comboBoxBooks);
 	}
+	/**
+	 * Method that creates the drop down menu for author.
+	 * @param menuOptions
+	 */
 	public void addDropDownMenuAuthor(ComboBoxObject[] menuOptions) {
 		int arrayLength = menuOptions.length;
 		String[] menuOptionsString = new String[arrayLength];
@@ -147,40 +152,72 @@ public class AddWindow extends JFrame {
 		comboBoxAuthor.setBounds(636, 13, 300, 22);
 		contentPane.add(comboBoxAuthor);
 	}
-
+	/**
+	 * Method that locks a combobox.
+	 * @param comboBox
+	 */
 	public void comboBoxLock(ObjectBox comboBox){
 		comboBox.setEnabled(false);
 	}
+	/**
+	 * Method that Unlocks a combobox.
+	 * @param comboBox
+	 */
 	public void comboBoxUnlock(ObjectBox comboBox){
 		comboBox.setEnabled(true);
 	}
-	
+	/**
+	 * Method that disables and hides a combobox.
+	 * @param comboBox
+	 */
 	public void comboBoxDisable(ObjectBox comboBox){
 		comboBox.setVisible(false);
 		comboBox.setEnabled(false);
 	}
-
+	/**
+	 * Method that enables and shows a cmbobox.
+	 * @param comboBox
+	 */
 	public void comboBoxEnable(ObjectBox comboBox){
 		comboBox.setVisible(true);
 		comboBox.setEnabled(true);
 	}
+	/**
+	 * Method that disables a textfield.
+	 * 
+	 * @param text
+	 */
 	public void textFieldDisable(FocusedTextField text){
 		text.setVisible(false);
 		text.setEnabled(false);
 		text.setEditable(false);
 	}
+	/**
+	 * Method that enables and shows a textfield.
+	 * @param text
+	 */
 	public void textFieldEnable(FocusedTextField text){
 		text.setVisible(true);
 		text.setEnabled(true);
 		text.setEditable(true);
 	}
-
+	/**
+	 * Method that disables a button.
+	 * 
+	 * @param rb
+	 */
 	public void disableButton(RolloverButton rb){
 		rb.setEnabled(false);
 	}
+	/**
+	 * Method that enables a button.
+	 * 
+	 * @param rb
+	 */
 	public void enableButton(RolloverButton rb){
 		rb.setEnabled(true);
 	}
+	
 	public ObjectBox getComboBoxStores(){
 		return this.comboBoxStores;
 	}
