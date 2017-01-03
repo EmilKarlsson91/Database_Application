@@ -7,14 +7,23 @@ Uses MySQL.
 Saves data in a database called 'bookstore', it contains four tables, 'store', 'book', 'author' and 'have'.
 
 store:
+
 +--------+-------------+------+-----+---------+----------------+
+
 | Field  | Type        | Null | Key | Default | Extra          |
+
 +--------+-------------+------+-----+---------+----------------+
+
 | id     | int(11)     | NO   | PRI | NULL    | auto_increment |
+
 | name   | varchar(32) | NO   |     | NULL    |                |
+
 | adress | varchar(32) | NO   |     | NULL    |                |
+
 +--------+-------------+------+-----+---------+----------------+
+
 book:
+
 +----------+-------------+------+-----+---------+----------------+
 | Field    | Type        | Null | Key | Default | Extra          |
 +----------+-------------+------+-----+---------+----------------+
