@@ -1,5 +1,5 @@
 # Database_Application
-Scoolproject about a data application.
+Schoolproject about a data application.
 Mimics a admin control window for a bookdealer.
 
 Uses MySQL.
